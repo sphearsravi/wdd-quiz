@@ -44,7 +44,9 @@ html,body{height:100%;background:var(--navy);color:var(--off);font-family:'Inter
 .num.win{background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 0 rgba(0,0,0,.45)) drop-shadow(0 0 40px rgba(217,178,58,.7));animation:slam .7s cubic-bezier(.2,.9,.3,1.4) both}
 @keyframes slam{from{transform:scale(2.6);opacity:0}to{transform:none;opacity:1}}
 .num.idle{color:#3A5BB5;text-shadow:none}
-.winlbl{font-family:'Sora';font-weight:800;font-size:clamp(20px,3.4vh,34px);letter-spacing:6px;text-transform:uppercase;min-height:1.4em;animation:fade .6s .5s both}
+.winlbl{min-height:2.6em;animation:fade .6s .5s both;display:flex;flex-direction:column;align-items:center;gap:4px}
+.winlbl .wname{font-family:'Sora';font-weight:800;font-size:clamp(26px,4.6vh,48px);line-height:1.1;background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
+.winlbl .wsub{font-size:clamp(12px,1.8vh,16px);letter-spacing:4px;text-transform:uppercase;color:#FFF3C4}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .bigbtn{margin-top:clamp(10px,2vh,22px);font-family:'Sora';font-weight:800;font-size:clamp(20px,3vh,28px);padding:clamp(12px,2vh,20px) clamp(40px,6vw,72px);border-radius:999px;border:none;color:#3a2800;background:var(--goldv);box-shadow:inset 0 2px 0 rgba(255,255,255,.7),0 10px 30px rgba(0,0,0,.4),0 0 40px rgba(217,178,58,.5);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s;animation:beat 1.8s ease-in-out infinite}
 .bigbtn:hover{transform:translateY(-3px) scale(1.03)}
@@ -61,6 +63,7 @@ html,body{height:100%;background:var(--navy);color:var(--off);font-family:'Inter
 .slot.done{border:2px solid transparent;background:linear-gradient(rgba(23,53,135,.95),rgba(10,27,79,.95)) padding-box,var(--gold) border-box;box-shadow:0 0 30px rgba(217,178,58,.35)}
 .slot.done .v{background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent;animation:fade .5s both}
 .slot.done .lb{color:#FFF3C4}
+.slot .nm{font-size:clamp(11px,1.5vh,14px);color:var(--off);margin-top:4px;line-height:1.2;min-height:2.4em;opacity:.9}
 .slot.now{border-color:#FFF3C4;border-style:solid;box-shadow:0 0 24px rgba(79,139,255,.5)}
 /* wall */
 .wall{display:flex;flex-direction:column;min-height:0;border-radius:22px;background:rgba(10,27,79,.96);border:2px solid #2B4FA8;padding:16px}
@@ -96,7 +99,7 @@ body.nohost #host{display:none}body.nohost .balloons,body.nohost .sparks{bottom:
       <h1 class="title gtxt">LUCKY DRAW</h1>
       <div class="sub" id="sub">Draw 1 of 3</div>
       <div class="drum"><div class="num idle" id="num">?</div></div>
-      <div class="winlbl gtxt" id="winlbl"></div>
+      <div class="winlbl" id="winlbl"></div>
       <button class="bigbtn" id="go" onclick="draw()">DRAW</button>
       <div class="hint">Space = draw</div>
       <div class="winners" id="slots"></div>
@@ -114,6 +117,7 @@ body.nohost #host{display:none}body.nohost .balloons,body.nohost .sparks{bottom:
 
 <script>
 const CODES=[16,19,21,25,27,28,29,30,31,32,33,34,35,36,37,39,41,42,47,50,54,56,58,61,62,66,69,70,71,72,73,77,79,81,82,83,84,87,90,91,92,99,101,103,105,106,107,108,109,112,115,116,117,118,119,120,121,122,123,124,125];
+const NAMES={"25": "Abdulkhaleq Qattan", "84": "Abdullah Ahmad Ayyaf Alayyaf", "121": "Abdulrahman Mohammad Saud AlRasheedi", "125": "Abeer Naser Yousef AlGhanim", "107": "Adam Aghazarian Khouygani", "37": "Ahmad Abdulaziz Abdullah Alrasheed", "28": "Ahmad Hamad Lazam Hussain", "87": "Ahmad Yosef Mohammad Saleh", "39": "Ahmad Zaid Eissa Alhafedh", "58": "Ahmed Salah Salem Ghaith", "106": "Ala N H Abu Shouk", "83": "Ali Hamid Osmani Far", "109": "Ali Ibrahim Ali AlHaidar", "47": "Ali Rashed Ahmad AlHaqqan", "56": "Amro Mohamed", "122": "Aseel Fuad Abdulrahman AlTerkait", "41": "Ashwaq Saleh Abdullah AlSaffar", "108": "Bereen Ahmed Kamal Abdalrehem", "16": "Dina Abbas Namah Khamees", "27": "Elbagir Yassin Mohamed Abdulsamad", "124": "Fahad J A AlMubaraki", "69": "Haitham Hamad Hussain AlAjmi", "101": "Hamad Naser Sulaiman AlAftan", "71": "Hanan Yousef Khamees", "31": "Hazar Shafiq Mohammad Karajeh", "30": "Jasmin Softic", "79": "Khalifah Ahmad Mohammad Alnemash", "112": "Leitao Gladstone Pongiano", "32": "Louloua A M Altuwaijri", "81": "Lujain Adel Abdulsamad Boshehri", "73": "Mahmoud Korany Abdelfattah Abdellatif", "116": "Mahmoud Mohamed Mohamed Dwidar", "34": "Mahmoud Mohammad Zaman Mohammad", "42": "Maie M A Alnesaf", "105": "Mariam Johar Qasem", "61": "Marwa Mohammad AlTohami Eid", "91": "Mishari ali Mohammad AlAjmi", "36": "Mohammad Adel Mohammad Albaqshi", "19": "Mohammad Ahmad Faraj Ali", "99": "Mohammed A H Khan", "82": "Mohsen Sobhi Armanios Abdulmalak", "120": "Mounira Basel S AlSabah", "66": "Muneerah Faleh Mohammed Aldosari", "77": "Muniah AlJuwaini", "115": "Neda Abdullah AlDaihani", "35": "Ohoud Abdulhadi Abdulhameed Almutawaa", "72": "Rakan Falah ALKIDIM", "119": "Rakan T H AlFadalah", "90": "Raniah Mohammad AlOmar AlDerbas", "21": "Ravishankar Rajathiru Vengadasamy", "33": "Rawan Khaled Khaleel Hussain", "92": "Saleh Omar Saleh Sulaiman", "103": "Saleh O S AlDuaij", "50": "Salem Fahad Homoud AlBaz", "118": "Sara M J AlShehab", "54": "Shamayel H KH Mohsen", "123": "Suad E A AlFraih", "62": "Suzan Osab Pazian", "70": "Waleed Ahmad Hajy", "29": "Yousef Ahmad AlNaser", "117": "Yousef Mostafa Ali Alshatti"};
 const ROUNDS=3;
 let S={winners:[],skipped:[]};
 try{const s=JSON.parse(localStorage.getItem("wdd_draw"));if(s&&s.winners)S=s;}catch(e){}
@@ -127,11 +131,11 @@ function ui(){
   const p=pot(),k=S.winners.length;
   document.getElementById("potN").textContent=p.length;document.getElementById("wallN").textContent=p.length+" / "+CODES.length;
   sub.textContent=k>=ROUNDS?"All three winners drawn":"Draw "+(k+1)+" of "+ROUNDS;
-  document.getElementById("slots").innerHTML=[0,1,2].map(i=>`<div class="slot ${S.winners[i]!==undefined?"done":(i===k?"now":"")}"><div class="lb">Winner ${i+1}</div><div class="v">${S.winners[i]!==undefined?S.winners[i]:"—"}</div></div>`).join("");
+  document.getElementById("slots").innerHTML=[0,1,2].map(i=>`<div class="slot ${S.winners[i]!==undefined?"done":(i===k?"now":"")}"><div class="lb">Winner ${i+1}</div><div class="v">${S.winners[i]!==undefined?S.winners[i]:"—"}</div><div class="nm">${S.winners[i]!==undefined?NAMES[S.winners[i]]:""}</div></div>`).join("");
   document.getElementById("tiles").innerHTML=CODES.map(c=>`<div class="tile ${S.winners.includes(c)?"won":""} ${S.skipped.includes(c)?"out":""}" id="t${c}">${c}</div>`).join("");
   go.disabled=spinning||k>=ROUNDS||p.length===0; go.textContent=k>=ROUNDS?"DONE":"DRAW";
   document.getElementById("redo").style.visibility=k>0&&!spinning?"visible":"hidden";
-  if(!spinning){ if(k>0){numEl.textContent=S.winners[k-1];numEl.className="num win";winlbl.textContent="Winner "+k;} else {numEl.textContent="?";numEl.className="num idle";winlbl.textContent="";} }
+  if(!spinning){ if(k>0){numEl.textContent=S.winners[k-1];numEl.className="num win";showWin(k);} else {numEl.textContent="?";numEl.className="num idle";winlbl.textContent="";} }
 }
 let AC;function tick(f=700,d=.05,v=.15){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type="square";o.connect(g);g.connect(AC.destination);o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.start();o.stop(AC.currentTime+d);}catch(e){}}
 function fanfare(){[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tick(f,.35,.2),i*120));}
@@ -142,13 +146,14 @@ function draw(){
   const total=6000,start=performance.now();let last=0,lastLit=null;
   (function step(now){
     const t=(now-start)/total;
-    if(t>=1){ numEl.textContent=winner;numEl.className="num win";lit(winner,true);spinning=false;S.winners.push(winner);save();ui();numEl.textContent=winner;numEl.className="num win";winlbl.textContent="Winner "+S.winners.length;fanfare();setTimeout(celebrate,300);return; }
+    if(t>=1){ numEl.textContent=winner;numEl.className="num win";lit(winner,true);spinning=false;S.winners.push(winner);save();ui();numEl.textContent=winner;numEl.className="num win";showWin(S.winners.length);fanfare();setTimeout(celebrate,300);return; }
     const interval=40+Math.pow(t,3)*560;   // speeds up to slow down
     if(now-last>interval){last=now;const c=p[rnd(p.length)];numEl.textContent=c;lit(c);tick(600+t*500,.03,.08);}
     requestAnimationFrame(step);
   })(start);
   function lit(c,won){if(lastLit){lastLit.classList.remove("lit");}const el=document.getElementById("t"+c);if(el){el.classList.add(won?"won":"lit");lastLit=won?null:el;}}
 }
+function showWin(k){const c=S.winners[k-1];winlbl.innerHTML=`<span class="wname">${NAMES[c]||""}</span><span class="wsub">Winner ${k} · Code ${c}</span>`;}
 function redraw(){ if(spinning||!S.winners.length)return; const c=S.winners.pop(); S.skipped.push(c); save(); ui(); }
 let rstT=null;function askReset(b){if(b.dataset.arm){clearTimeout(rstT);S={winners:[],skipped:[]};save();ui();delete b.dataset.arm;b.textContent="↺ Reset draw";b.style.color="";return;}b.dataset.arm=1;b.textContent="Click again to confirm";b.style.color="#F7D25B";rstT=setTimeout(()=>{delete b.dataset.arm;b.textContent="↺ Reset draw";b.style.color="";},3000);}
 document.addEventListener("keydown",e=>{if(e.code==="Space"||e.key==="Enter"){e.preventDefault();draw();}});
