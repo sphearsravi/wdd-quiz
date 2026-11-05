@@ -290,6 +290,11 @@ body:not(.nohost) .balloons,body:not(.nohost) .sparks{bottom:66px}
 .mfmid .take{margin-top:clamp(12px,2vh,22px)}
 .mfmid .revealbtn{margin-top:clamp(10px,2vh,20px)}
 
+
+.tp .bonus{margin-top:14px;width:100%;font-family:'Sora';font-weight:800;font-size:clamp(16px,2.2vh,22px);padding:12px 10px;border-radius:14px;border:2px dashed #D9B23A;background:rgba(217,178,58,.08);color:#FFF3C4;animation:fade .4s both}
+.tp .bonus:hover{background:rgba(217,178,58,.2)}
+.tp .bonus.on{border-style:solid;background:var(--goldv);color:#3a2800;box-shadow:0 0 20px rgba(217,178,58,.6),inset 0 2px 0 rgba(255,255,255,.6)}
+
 .hidden{display:none!important}
 </style>
 </head>
@@ -363,7 +368,7 @@ function score(){
     const k=st.t+st.i; if(!S.revealed[k]||!S.ans[k]) return;
     const r=S.ans[k];
     for(let t=0;t<2;t++){
-      if(st.t==="fo"){ if(r.a[t]===FO[st.i].correct) sc[t]+=1; }
+      if(st.t==="fo"){ if(r.a[t]===FO[st.i].correct) sc[t]+=1; if(r.b[t]) sc[t]+=1; }
       if(st.t==="mf"){ if(r.a[t]===MF[st.i].a) sc[t]+=1; if(r.b[t]) sc[t]+=1; }
     }
   });
@@ -480,13 +485,13 @@ function panel(t,labels,subs,r,rev,isFO,correct){
   let h=`<div class="tp ${cls}"><h3>${S.names[t]}</h3><div class="ch">`;
   labels.forEach((l,i)=>h+=`<button class="${r.a[t]===i?"on":""}" onclick="setA(${t},${i})">${l}${subs[i]?`<small>${subs[i]}</small>`:""}</button>`);
   h+=`</div>`;
-  if(!isFO) h+=`<div class="cf"><div class="lb">Bonus</div><button class="${r.b[t]?"on":""}" onclick="setB(${t})">+1 for the reason</button></div>`;
-  if(rev){const ok=r.a[t]===correct;let pts=0;if(ok)pts=1;if(!isFO&&r.b[t])pts+=1;
+  if(rev){const ok=r.a[t]===correct;let pts=0;if(ok)pts=1;if(r.b[t])pts+=1;
+    h+=`<button class="bonus ${r.b[t]?"on":""}" onclick="setB(${t})">${r.b[t]?"★ Bonus added":"☆ Bonus +1"}</button>`;
     h+=`<div class="res ${ok?"ok":"no"}">${ok?"✔ Correct":"✘ Wrong"} · +${pts}</div>`;}
   return h+`</div>`;
 }
 function hostAnswers(labels,r,rev,isFO){
-  let h=`<span class="hint">1 point per correct answer · Myth/Fact +1 for the reason</span><span class="sp"></span><button class="ghost" id="rst" onclick="askReset(this)">↺ Reset quiz</button><button class="ghost" onclick="go(-1)">← Back</button>`;
+  let h=`<span class="hint">1 point per correct answer · after reveal: ★ Bonus +1 per team</span><span class="sp"></span><button class="ghost" id="rst" onclick="askReset(this)">↺ Reset quiz</button><button class="ghost" onclick="go(-1)">← Back</button>`;
   h+=rev?`<button class="big" onclick="go(1)">Next →</button>`:`<button class="big" onclick="reveal()">Reveal</button>`;
   h+=`<span class="hint">Space = reveal/next · 1 2 3 / Q W E = answers</span>`;
   host.innerHTML=h;
@@ -523,7 +528,7 @@ function winner(){
 /* ---------------- ACTIONS ---------------- */
 function setA(t,i){const r=rec();r.a[t]=r.a[t]===i?null:i;render();}
 function setC(t,i){rec().c[t]=i;render();}
-function setB(t){const r=rec();r.b[t]=!r.b[t];render();}
+function setB(t){const r=rec();r.b[t]=!r.b[t];render();if(r.b[t]){confetti(t===0?innerWidth*.12:innerWidth*.88,innerHeight*.5,40,1.0);loop();}}
 function reveal(){S.revealed[key()]=true;timerStop();render();const st=steps[S.step];const r=rec();const ok=t=>st.t==="fo"?r.a[t]===FO[st.i].correct:r.a[t]===MF[st.i].a;if(ok(0)||ok(1))burst(ok(0),ok(1));}
 function go(d){S.step=Math.max(0,Math.min(steps.length-1,S.step+d));render();}
 let rstT=null;function askReset(b){if(b.dataset.arm){clearTimeout(rstT);resetAll();return;}b.dataset.arm=1;b.textContent="Click again to confirm";b.style.borderColor="#D9B23A";b.style.color="#F7D25B";rstT=setTimeout(()=>{delete b.dataset.arm;b.textContent="↺ Reset quiz";b.style.borderColor="";b.style.color="";},3000);}
